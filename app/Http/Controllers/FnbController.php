@@ -12,7 +12,8 @@ class FnbController extends Controller
      */
     public function index()
     {
-        //
+        $fnbs = Fnb::all();
+        return response()->json($fnbs);
     }
 
     /**
@@ -20,15 +21,40 @@ class FnbController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validateData = $request->validate([
+            'name' => 'required',
+            'category' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'pathImage' => 'required',
+            ]);
+    
+            $fnb = Fnb::create([
+                'fnbID' => Fnb::generateFnbID(),
+                'name' => $validateData['name'],
+                'category' => $validateData['category'],
+                'description' => $validateData['description'],
+                'price' => $validateData['price'],
+                'pathImage' => $validateData['pathImage'],
+            ]);
+    
+            return response()->json([
+                'message' => 'Berhasil create Fnb',
+                'post' => $fnb,
+            ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Fnb $fnb)
+    public function show($id)
     {
-        //
+        $fnb = Fnb::find($id);
+        if(!$fnb) {
+            return response()->json(['message' => 'Fnb not found'], 404);
+        }
+
+        return response()->json(['fnb' => $fnb]);
     }
 
     /**

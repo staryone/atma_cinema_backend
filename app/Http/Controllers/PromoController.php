@@ -12,7 +12,8 @@ class PromoController extends Controller
      */
     public function index()
     {
-        //
+        $promos = Promo::all();
+        return response()->json($promos);
     }
 
     /**
@@ -20,15 +21,36 @@ class PromoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validateData = $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+            'pathImage' => 'required',
+        ]);
+
+        $promo = Promo::create([
+            'promoID' => Promo::generatePromoID(),
+            'name' => $validateData['name'],
+            'description' => $validateData['description'],
+            'pathImage' => $validateData['pathImage'],
+        ]);
+
+        return response()->json([
+            'message' => 'Berhasil create Promo',
+            'post' => $promo,
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Promo $promo)
+    public function show($id)
     {
-        //
+        $promo = Promo::find($id);
+        if(!$promo) {
+            return response()->json(['message' => 'Promo not found'], 404);
+        }
+
+        return response()->json(['promo' => $promo]);
     }
 
     /**

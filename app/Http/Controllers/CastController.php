@@ -12,7 +12,8 @@ class CastController extends Controller
      */
     public function index()
     {
-        //
+        $casts = Cast::all();
+        return response()->json($casts);
     }
 
     /**
@@ -20,15 +21,37 @@ class CastController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validateData = $request->validate([
+            'movieID' => 'required',
+            'name' => 'required',
+            'imagePath' => 'required',
+        ]);
+
+        $cast = Cast::create([
+            'castID' => Cast::generateCastID(),
+            'movieID' => $validateData['movieID'],
+            'name' => $validateData['name'],
+            'description' => $validateData['description'],
+            'pathImage' => $validateData['pathImage'],
+        ]);
+
+        return response()->json([
+            'message' => 'Berhasil create Promo',
+            'post' => $cast,
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Cast $cast)
+    public function show($id)
     {
-        //
+        $cast = Cast::find($id);
+        if(!$cast) {
+            return response()->json(['message' => 'Cast not found'], 404);
+        }
+
+        return response()->json(['cast' => $cast]);
     }
 
     /**
