@@ -13,7 +13,7 @@ class Movie extends Model
     protected $primaryKey = 'movieID';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'movieID',
