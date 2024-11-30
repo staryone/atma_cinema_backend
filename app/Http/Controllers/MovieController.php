@@ -60,14 +60,14 @@ class MovieController extends Controller
 
         return response()->json($movies);
     }
-    public function getTopRatedMovies()
+    public function getNowShowingMovies()
     {
-        $movies = Movie::join('reviews', 'movies.movieID', '=', 'reviews.movieID')
-            ->join('screenings', 'movies.movieID', '=', 'screenings.movieID')
-            ->select('movies.movieID', 'movies.movieTitle', Movie::raw('AVG(reviews.rating) as avgRating'), 'movies.cover')
-            ->where('screenings.date', '>=', now()->toDateString())
-            ->groupBy('movies.movieID', 'movies.movieTitle', 'movies.cover')
-            ->orderByDesc('avgRating')
+        $movies = Movie::join('screenings', 'movies.movieID', '=', 'screenings.movieID')
+            ->select(
+                'movies.*'
+            )
+            ->whereMonth('screenings.date', now()->month)
+            ->whereYear('screenings.date', now()->year)
             ->take(3)
             ->get();
 
@@ -77,7 +77,7 @@ class MovieController extends Controller
     public function getUpcomingMovies()
     {
         $movies = Movie::join('screenings', 'movies.movieID', '=', 'screenings.movieID')
-            ->select('movies.movieID', 'movies.movieTitle', 'movies.cover', 'screenings.date', 'screenings.time')
+            ->select('movies.*')
             ->where('screenings.date', '>', now()->toDateString())
             ->orderBy('screenings.date')
             ->take(5)
@@ -88,7 +88,13 @@ class MovieController extends Controller
 
     public function getAllMovies()
     {
-        $movies = Movie::select('movies.movieID', 'movies.movieTitle', 'movies.cover')->get();
+        $movies = Movie::join('screenings', 'movies.movieID', '=', 'screenings.movieID')
+            ->select(
+                'movies.*'
+            )
+            ->whereMonth('screenings.date', now()->month)
+            ->whereYear('screenings.date', now()->year)
+            ->get();
 
         return response()->json($movies);
     }
