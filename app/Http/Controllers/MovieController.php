@@ -3,99 +3,99 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movie;
+use Http;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function fetchAndSaveMovie($movieTitle)
     {
-        $movie = Movie::all();
-        return response()->json($movie);
-    }
+        $apiKey = '658b99e2';
+        $url = "https://www.omdbapi.com/";
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'movieTitle' => 'required|string',
-            'duration' => 'required|integer',
-            'synopsis' => 'nullable|text',
-            'director' => 'required|text',
-            'writers' => 'nullable|text',
-            'ageRating' => 'required|string',
-            'genre' => 'required|string',
-            'cover' => 'nullable|string',
+        $response = Http::get($url, [
+            't' => $movieTitle,
+            'apikey' => $apiKey,
         ]);
 
-        $movie = Movie::create([
-            'movieTitle' => $validatedData['movieTitle'],
-            'duration' => $validatedData['duration'],
-            'synopsis' => $validatedData['synopsis'],
-            'director' => $validatedData['director'],
-            'writers' => $validatedData['writers'],
-            'ageRating' => $validatedData['ageRating'],
-            'genre' => $validatedData['genre'],
-            'cover' => $validatedData['cover'],
-        ]);
+        if ($response->successful()) {
+            $movieData = $response->json();
 
-        return response()->json([
-            'message' => 'Berhasil create Movie',
-            'post' => $movie,
-        ], 201);
+            if ($movieData['Response'] === 'True') {
+                Movie::insert([
+                    'movieID' => Movie::generateMovieID(),
+                    'movieTitle' => $movieData['Title'] ?? '',
+                    'duration' => isset($movieData['Runtime']) ? (int) filter_var($movieData['Runtime'], FILTER_SANITIZE_NUMBER_INT) : 0,
+                    'synopsis' => $movieData['Plot'] ?? '',
+                    'director' => $movieData['Director'] ?? '',
+                    'writers' => $movieData['Writer'] ?? '',
+                    'ageRating' => $movieData['Rated'] ?? '',
+                    'genre' => $movieData['Genre'] ?? '',
+                    'trailer' => null,
+                    'cover' => $movieData['Poster'] ?? '',
+                ]);
+
+                return response()->json(['message' => 'Movie saved successfully!'], 201);
+            } else {
+                return response()->json(['error' => 'Movie not found in OMDB API.'], 404);
+            }
+        } else {
+            return response()->json(['error' => 'Failed to fetch data from OMDB API.'], 500);
+        }
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function searchMovies(Request $request)
     {
-        $movie = Movie::find($id);
-        return response()->json($movie);
-    }
+        $searchTerm = $request->input('query');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $movie = Movie::find($id);
-
-        $validatedData = $request->validate([
-            'movieTitle' => 'required|string',
-            'duration' => 'required|integer',
-            'synopsis' => 'nullable|text',
-            'director' => 'required|text',
-            'writers' => 'nullable|text',
-            'ageRating' => 'required|string',
-            'genre' => 'required|string',
-            'cover' => 'nullable|string',
-        ]);
-
-        $movie->update($validatedData);
-
-        return response()->json([
-            'message' => 'Berhasil mengupdate Movie',
-            'post' => $movie,
-        ], 201);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $movie = Movie::find($id);
-
-        if (!$movie) {
-            return response()->json(['message' => 'Movie tidak ditemukan']);
+        if (!$searchTerm) {
+            return response()->json([
+                'error' => 'Query parameter is required.'
+            ], 400);
         }
 
-        $movie->delete();
-        return response()->json(['message' => 'Movie berhasil dihapus']);
+        $movies = Movie::where('movieTitle', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('director', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('genre', 'LIKE', '%' . $searchTerm . '%')
+            ->get();
+
+        return response()->json($movies);
+    }
+    public function getTopRatedMovies()
+    {
+        $movies = Movie::join('reviews', 'movies.movieID', '=', 'reviews.movieID')
+            ->join('screenings', 'movies.movieID', '=', 'screenings.movieID')
+            ->select('movies.movieID', 'movies.movieTitle', Movie::raw('AVG(reviews.rating) as avgRating'), 'movies.cover')
+            ->where('screenings.date', '>=', now()->toDateString())
+            ->groupBy('movies.movieID', 'movies.movieTitle', 'movies.cover')
+            ->orderByDesc('avgRating')
+            ->take(3)
+            ->get();
+
+        return response()->json($movies);
+    }
+
+    public function getUpcomingMovies()
+    {
+        $movies = Movie::join('screenings', 'movies.movieID', '=', 'screenings.movieID')
+            ->select('movies.movieID', 'movies.movieTitle', 'movies.cover', 'screenings.date', 'screenings.time')
+            ->where('screenings.date', '>', now()->toDateString())
+            ->orderBy('screenings.date')
+            ->take(5)
+            ->get();
+
+        return response()->json($movies);
+    }
+
+    public function getAllMovies()
+    {
+        $movies = Movie::select('movies.movieID', 'movies.movieTitle', 'movies.cover')->get();
+
+        return response()->json($movies);
+    }
+
+    public function getMovieById($id)
+    {
+        $movie = Movie::find($id)->first();
+        return response()->json($movie);
     }
 }

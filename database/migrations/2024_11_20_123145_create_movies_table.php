@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('ageRating');
             $table->string('genre');
             $table->string('cover')->nullable();
+            $table->string('trailer')->nullable();
             $table->primary('movieID');
         });
     }

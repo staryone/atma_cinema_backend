@@ -3,14 +3,24 @@
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\StudioController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
-Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:sanctum');
+Route::post('/auth/google/callback', [UserController::class, 'handleGoogleCallback']);
+Route::post('/movies/fetch/{title}', [MovieController::class, 'fetchAndSaveMovie']);
 
-Route::resource('movies', MovieController::class);
-Route::resource('studios', StudioController::class)->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [UserController::class, 'logout']);
+    Route::get('/profile', [UserController::class, 'profile']);
+    Route::post('/user/profile/update', [UserController::class, 'updateProfile']);
+
+    Route::get('/movies/search', [MovieController::class, 'searchMovies']);
+    Route::get('/movies/top-rated', [MovieController::class, 'getTopRatedMovies']);
+    Route::get('/movies/upcoming', [MovieController::class, 'getUpcomingMovies']);
+    Route::get('/movies/all', [MovieController::class, 'getAllMovies']);
+    Route::get('/movies/{id}', [MovieController::class, 'getMovieById']);
+
+    Route::resource('studios', StudioController::class);
+});
+
