@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsersSeeder::class);
         $this->call(StudiosSeeder::class);
+        $this->call(FnbsSeeder::class);
+        $this->call(PromosSeeder::class);
         $this->call(MoviesSeeder::class);
         $this->call(ScreeningsSeeder::class);
         $this->call(PaymentsSeeder::class);

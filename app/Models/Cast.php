@@ -14,11 +14,13 @@ class Cast extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'castID',
         'movieID',
         'name',
-        'imagePath',
+        'pathImage',
     ];
 
     protected static function boot()
@@ -34,7 +36,7 @@ class Cast extends Model
     {
         do {
             $castID = 'CST' . strtoupper(Str::random(5));
-        } while (self::where('fnbID', $castID)->exists());
+        } while (self::where('castID', $castID)->exists());
 
         return $castID;
     }

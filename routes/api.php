@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CastController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\PaymentController;
@@ -14,6 +15,7 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/auth/google/callback', [UserController::class, 'handleGoogleCallback']);
 Route::post('/movies/fetch/{title}', [MovieController::class, 'fetchAndSaveMovie']);
+Route::get('/cast/generate', [CastController::class, 'generateCastByMovie']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);

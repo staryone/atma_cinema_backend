@@ -34,7 +34,7 @@ class Promo extends Model
     public static function generatePromoID()
     {
         do {
-            $promoID = 'PMR' . strtoupper(Str::random(5));
+            $promoID = 'PRM' . strtoupper(Str::random(5));
         } while (self::where('promoID', $promoID)->exists());
 
         return $promoID;
