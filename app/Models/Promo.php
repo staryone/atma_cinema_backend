@@ -19,6 +19,7 @@ class Promo extends Model
         'name',
         'description',
         'pathImage',
+        'isFnb',
     ];
 
     protected static function boot()

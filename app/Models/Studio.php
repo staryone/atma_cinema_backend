@@ -14,7 +14,7 @@ class Studio extends Model
     protected $primaryKey = 'studioID';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'studioID',

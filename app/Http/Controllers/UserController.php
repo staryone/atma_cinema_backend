@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Hash;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Storage;
 
 class UserController extends Controller
 {
@@ -113,40 +114,50 @@ class UserController extends Controller
 
     public function profile(Request $request)
     {
+        $request->user()->profilePicture = Storage::disk('s3')->temporaryUrl(
+            $request->user()->profilePicture,
+            now()->addHours(2)
+        );
         return response()->json($request->user());
     }
 
     public function updateProfile(Request $request)
     {
-        $user = $request->user();
+        $user = auth()->user();
 
         $request->validate([
             'fullName' => 'nullable|string|max:255',
-            'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'dateOfBirth' => 'nullable|date',
+            'email' => 'nullable|email|unique:users,email,' . $user->userID . ',userID',
+            'dateOfBirth' => 'nullable|string',
+            'gender' => 'nullable|in:Undefined,Male,Female',
             'phoneNumber' => 'nullable|string|max:15',
-            'profilePicture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profilePicture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
         ]);
 
-        if ($request->has('fullName')) {
+        if ($request->has('fullName') && $request->fullName != $user->fullName) {
             $user->fullName = $request->fullName;
         }
-        if ($request->has('email')) {
+        if ($request->has('email') && $request->email != $user->email) {
             $user->email = $request->email;
         }
+
+
         if ($request->has('dateOfBirth')) {
-            $user->dateOfBirth = $request->dateOfBirth;
+            $request['dateOfBirth'] = Carbon::createFromFormat('d/m/Y', $request['dateOfBirth'])->format('Y-m-d');
+            if ($request->dateOfBirth != $user->dateOfBirth) {
+                $user->dateOfBirth = $request->dateOfBirth;
+            }
         }
-        if ($request->has('phoneNumber')) {
+        if ($request->has('phoneNumber') && $request->phoneNumber != $user->phoneNumber) {
             $user->phoneNumber = $request->phoneNumber;
         }
 
         if ($request->hasFile('profilePicture')) {
             if ($user->profilePicture) {
-                \Storage::delete($user->profilePicture);
+                \Storage::disk('s3')->delete($user->profilePicture);
             }
 
-            $path = $request->file('profilePicture')->store('profile_pictures');
+            $path = $request->file('profilePicture')->store('profile_pictures', 's3');
             $user->profilePicture = $path;
         }
 

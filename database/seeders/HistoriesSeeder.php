@@ -18,43 +18,31 @@ class HistoriesSeeder extends Seeder
                 'historyID' => 'HIS00001',
                 'userID' => 'USREFFJM',
                 'paymentID' => 'PAY00001',
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
                 'historyID' => 'HIS00002',
                 'userID' => 'USREFFJM',
                 'paymentID' => 'PAY00002',
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
                 'historyID' => 'HIS00003',
                 'userID' => 'USREFFJM',
                 'paymentID' => 'PAY00003',
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
                 'historyID' => 'HIS00004',
                 'userID' => 'USREFFJM',
                 'paymentID' => 'PAY00004',
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
                 'historyID' => 'HIS00005',
                 'userID' => 'USREFFJM',
                 'paymentID' => 'PAY00005',
-                'created_at' => null,
-                'updated_at' => null,
             ],
             [
                 'historyID' => 'HIS00006',
                 'userID' => 'USREFFJM',
                 'paymentID' => 'PAY00006',
-                'created_at' => null,
-                'updated_at' => null,
             ],
         ]);
     }
