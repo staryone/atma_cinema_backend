@@ -73,8 +73,6 @@ class UserController extends Controller
             'profilePicture' => null,
         ]);
 
-        // $token = $user->createToken('authToken')->plainTextToken;
-
         return response()->json([
             'userID' => $user->userID,
             'fullName' => $user->fullName,
@@ -114,10 +112,13 @@ class UserController extends Controller
 
     public function profile(Request $request)
     {
-        $request->user()->profilePicture = Storage::disk('s3')->temporaryUrl(
-            $request->user()->profilePicture,
-            now()->addHours(2)
-        );
+        if ($request->user()->profilePicture != null) {
+            $request->user()->profilePicture = Storage::disk('s3')->temporaryUrl(
+                $request->user()->profilePicture,
+                now()->addHours(2)
+            );
+        }
+
         return response()->json($request->user());
     }
 
