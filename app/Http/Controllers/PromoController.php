@@ -7,24 +7,25 @@ use Illuminate\Http\Request;
 
 class PromoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function getFnbPromo()
     {
-        $promos = Promo::all();
-        return response()->json($promos);
-    }
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        $promo = Promo::find($id);
-        if(!$promo) {
-            return response()->json(['message' => 'Promo not found'], 404);
+        $promo = Promo::where('isFnb', '=', true)->get();
+
+        if (!$promo) {
+            return response()->json(['message' => 'Promo fnb not found'], 404);
         }
 
-        return response()->json(['promo' => $promo]);
+        return response()->json($promo);
+    }
+
+    public function getGeneralPromo()
+    {
+        $promo = Promo::where('isFnb', '=', false)->get();
+
+        if (!$promo) {
+            return response()->json(['message' => 'Promo fnb not found'], 404);
+        }
+
+        return response()->json($promo);
     }
 }
