@@ -47,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/screenings/{screeningID}/seat-layout', [ScreeningController::class, 'updateSeatLayout']);
 
     Route::post('/tickets', [TicketController::class, 'createTicket']);
-    Route::get('/tickets/user/{userID}', [TicketController::class, 'getTicketsByUserId']);
+    Route::get('/tickets/user', [TicketController::class, 'getTicketsByUserId']);
     Route::get('/tickets/{ticketID}', [TicketController::class, 'getTicketById']);
 
     Route::post('/reviews/movie/{movieID}', [ReviewController::class, 'createReview']);

@@ -40,16 +40,17 @@ class TicketController extends Controller
         }
     }
 
-    public function getTicketsByUserId($userID)
+    public function getTicketsByUserId()
     {
         try {
+            $userID = auth()->user()->userID;
             $tickets = Ticket::where('userID', $userID)->get();
 
             if ($tickets->isEmpty()) {
-                return response()->json(['message' => 'No tickets found for this user'], 404);
+                return response()->json('No tickets found', 404);
             }
 
-            return response()->json(['data' => $tickets], 200);
+            return response()->json([$tickets], 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while retrieving tickets',
@@ -65,10 +66,10 @@ class TicketController extends Controller
             $ticket = Ticket::find($ticketID);
 
             if (!$ticket) {
-                return response()->json(['message' => 'Ticket not found'], 404);
+                return response()->json('Ticket not found', 404);
             }
 
-            return response()->json(['data' => $ticket], 200);
+            return response()->json($ticket, 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while retrieving the ticket',

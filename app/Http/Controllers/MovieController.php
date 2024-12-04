@@ -47,11 +47,9 @@ class MovieController extends Controller
     {
         $searchTerm = $request->input('query');
 
-        if (!$searchTerm) {
-            return response()->json([
-                'error' => 'Query parameter is required.'
-            ], 400);
-        }
+        // if (!$searchTerm || $searchTerm == '') {
+        //     return response()->json([]);
+        // }
 
         $movies = Movie::where('movieTitle', 'LIKE', '%' . $searchTerm . '%')
             ->orWhere('director', 'LIKE', '%' . $searchTerm . '%')
