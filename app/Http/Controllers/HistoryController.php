@@ -24,9 +24,9 @@ class HistoryController extends Controller
                 $query->whereRaw("CONCAT(date, ' ', time) < NOW()");
             })->get();
 
-            if ($tickets->isEmpty()) {
-                return response()->json('No History Orders found', 404);
-            }
+            // if ($tickets->isEmpty()) {
+            //     return response()->json('No History Orders found', 200);
+            // }
 
             return response()->json($tickets);
         } catch (Exception $e) {
