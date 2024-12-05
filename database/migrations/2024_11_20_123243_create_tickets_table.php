@@ -14,13 +14,9 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->string('ticketID', 8)->unique();
             $table->string('paymentID', 8);
-            $table->string('userID', 8);
-            $table->string('screeningID', 8);
             $table->string('seatID', 8);
             $table->enum('status', ['Success', 'cancelled']);
             $table->foreign('paymentID')->references('paymentID')->on('payments')->onDelete('cascade');
-            $table->foreign('screeningID')->references('screeningID')->on('screenings')->onDelete('cascade');
-            $table->foreign('userID')->references('userID')->on('users')->onDelete('cascade');
             $table->primary('ticketID');
         });
     }

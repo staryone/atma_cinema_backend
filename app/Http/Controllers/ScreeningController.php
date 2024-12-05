@@ -11,13 +11,16 @@ class ScreeningController extends Controller
     public function getScreeningsByMovieId($movieID)
     {
         try {
-            $screenings = Screening::where('movieID', $movieID)->get();
+            $screenings = Screening::with([
+                'movie',
+                'studio'
+            ])->whereDay('date', now()->day)->where('movieID', $movieID)->get();
 
             if ($screenings->isEmpty()) {
-                return response()->json(['message' => 'No screenings found for this movie'], 404);
+                return response()->json('No screenings found for this movie', 404);
             }
 
-            return response()->json(['data' => $screenings], 200);
+            return response()->json($screenings, 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while retrieving screenings',

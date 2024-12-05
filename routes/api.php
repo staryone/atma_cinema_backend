@@ -31,28 +31,32 @@ Route::get('/fnbs/{category}', [FnbController::class, 'getFnbsByCategory']);
 
 Route::get('/cast/generate', [CastController::class, 'generateCastByMovie']);
 
+Route::get('/screenings/movie/{movieID}', [ScreeningController::class, 'getScreeningsByMovieId']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/profile', [UserController::class, 'profile']);
     Route::post('/profile/update', [UserController::class, 'updateProfile']);
 
-    Route::get('/history-orders', [HistoryController::class, 'getHistoryOrder']);
+    Route::get('/histories', [HistoryController::class, 'getHistoryOrders']);
 
     Route::resource('studios', StudioController::class);
 
     Route::post('/payments', [PaymentController::class, 'createPayment']);
     Route::get('/payments/{id}', [PaymentController::class, 'getPaymentById']);
 
-    Route::get('/screenings/movie/{movieID}', [ScreeningController::class, 'getScreeningsByMovieId']);
     Route::put('/screenings/{screeningID}/seat-layout', [ScreeningController::class, 'updateSeatLayout']);
 
     Route::post('/tickets', [TicketController::class, 'createTicket']);
     Route::get('/tickets/user', [TicketController::class, 'getTicketsByUserId']);
-    Route::get('/tickets/{ticketID}', [TicketController::class, 'getTicketById']);
+    Route::get('/tickets/active', [TicketController::class, 'getActiveOrders']);
+    // Route::get('/tickets/{ticketID}', [TicketController::class, 'getTicketById']);
 
     Route::post('/reviews/movie/{movieID}', [ReviewController::class, 'createReview']);
     Route::get('/reviews', [ReviewController::class, 'getReviewsByAuthenticatedUser']);
     Route::get('/reviews/movie/{movieID}', [ReviewController::class, 'getReviewByMovie']);
     Route::put('/reviews/movie/{movieID}', [ReviewController::class, 'editReview']);
+
+    Route::post('/history/{id}/add-review', [HistoryController::class, 'addReviewToHistoryOrders']);
 });
 

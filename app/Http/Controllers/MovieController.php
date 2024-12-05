@@ -64,8 +64,8 @@ class MovieController extends Controller
             ->select(
                 'movies.*'
             )
-            ->whereMonth('screenings.date', now()->month)
-            ->whereYear('screenings.date', now()->year)
+            ->distinct('movies.movieID')
+            ->whereDay('screenings.date', now()->day)
             ->take(3)
             ->get();
 
@@ -77,6 +77,7 @@ class MovieController extends Controller
         $movies = Movie::join('screenings', 'movies.movieID', '=', 'screenings.movieID')
             ->select('movies.*')
             ->where('screenings.date', '>', now()->toDateString())
+            ->distinct('movies.movieID')
             ->orderBy('screenings.date')
             ->take(5)
             ->get();
@@ -90,8 +91,8 @@ class MovieController extends Controller
             ->select(
                 'movies.*'
             )
-            ->whereMonth('screenings.date', now()->month)
-            ->whereYear('screenings.date', now()->year)
+            ->whereDay('screenings.date', now()->day)
+            ->distinct('movies.movieID')
             ->get();
 
         return response()->json($movies);

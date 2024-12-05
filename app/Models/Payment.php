@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Str;
+use Illuminate\Support\Str;
 
 class Payment extends Model
 {
@@ -41,5 +41,15 @@ class Payment extends Model
         } while (self::where('paymentID', $paymentID)->exists());
 
         return $paymentID;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userID', 'userID');
+    }
+
+    public function screening()
+    {
+        return $this->belongsTo(Screening::class, 'screeningID', 'screeningID');
     }
 }

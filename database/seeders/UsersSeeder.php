@@ -19,9 +19,9 @@ class UsersSeeder extends Seeder
             'password' => '$2y$12$zRkrIu1veFgc9iHr5yDCuOubsyqrwG47/gJDdGL.AVc3EvEASaHi6',
             'dateOfBirth' => '2024-11-30',
             'registrationDate' => '2024-11-30',
-            'gender' => 'Undefined',
+            'gender' => 'Male',
             'phoneNumber' => '+621818181818',
-            'profilePicture' => null,
+            'profilePicture' => 'profile_pictures/p9wMd0n3Ciyf2sTEJt3IO97Kq97665CVZ0POUXLs.jpg',
         ]);
     }
 }

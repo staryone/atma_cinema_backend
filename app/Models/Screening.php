@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Screening extends Model
 {
@@ -40,5 +41,15 @@ class Screening extends Model
         } while (self::where('screeningID', $screeningID)->exists());
 
         return $screeningID;
+    }
+
+    public function movie()
+    {
+        return $this->belongsTo(Movie::class, 'movieID', 'movieID');
+    }
+
+    public function studio()
+    {
+        return $this->belongsTo(Studio::class, 'studioID', 'studioID');
     }
 }

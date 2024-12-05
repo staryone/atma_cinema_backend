@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Str;
+use Illuminate\Support\Str;
 
 class Ticket extends Model
 {
@@ -18,8 +18,6 @@ class Ticket extends Model
     protected $fillable = [
         'ticketID',
         'paymentID',
-        'userID',
-        'screeningID',
         'seatID',
         'status',
     ];
@@ -40,5 +38,10 @@ class Ticket extends Model
         } while (self::where('ticketID', $ticketID)->exists());
 
         return $ticketID;
+    }
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'paymentID', 'paymentID');
     }
 }

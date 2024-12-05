@@ -41,7 +41,7 @@ class FnbsSeeder extends Seeder
             [
                 'fnbID' => 'FNB00004',
                 'name' => 'Brown Tea',
-                'category' => 'Drink',
+                'category' => 'Drinks',
                 'description' => 'A soothing blend of premium tea leaves with a hint of caramelized sweetness, creating a rich and refreshing drink perfect for any time of the day.',
                 'price' => 15000,
                 'pathImage' => 'https://img.freepik.com/free-photo/ice-falling-brown-drink_1194-1074.jpg?ga=GA1.1.1961374560.1716992282&semt=ais_hybrid',

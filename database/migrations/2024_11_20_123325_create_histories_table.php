@@ -14,8 +14,10 @@ return new class extends Migration {
             $table->string('historyID', 8)->unique();
             $table->string('userID', 8);
             $table->string('paymentID', 8);
+            $table->string('reviewID', 8)->nullable();
             $table->foreign('userID')->references('userID')->on('users')->onDelete('cascade');
             $table->foreign('paymentID')->references('paymentID')->on('payments')->onDelete('cascade');
+            $table->foreign('reviewID')->references('reviewID')->on('reviews')->onDelete('cascade');
             $table->primary('historyID');
         });
     }

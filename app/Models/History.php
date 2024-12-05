@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class History extends Model
 {
@@ -18,6 +19,7 @@ class History extends Model
         'historyID',
         'userID',
         'paymentID',
+        'reviewID'
     ];
 
     protected static function boot()
@@ -36,5 +38,20 @@ class History extends Model
         } while (self::where('historyID', $historyID)->exists());
 
         return $historyID;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userID', 'userID');
+    }
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'paymentID', 'paymentID');
+    }
+
+    public function review()
+    {
+        return $this->belongsTo(Review::class, 'reviewID', 'reviewID');
     }
 }

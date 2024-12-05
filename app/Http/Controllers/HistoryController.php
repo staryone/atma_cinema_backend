@@ -3,35 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Models\History;
+use Exception;
 use Illuminate\Http\Request;
 
 class HistoryController extends Controller
 {
-    public function getHistoryOrder()
+    public function getHistoryOrders()
     {
-        $user = auth()->user();
+        try {
+            $userID = auth()->user()->userID;
 
-        $historyOrders = History::join('payments', 'histories.paymentID', '=', 'payments.paymentID')
-            ->join('users', 'histories.userID', '=', 'users.userID')
-            ->join('screenings', 'payments.screeningID', '=', 'screenings.screeningID')
-            ->join('movies', 'screenings.movieID', '=', 'movies.movieID')
-            ->leftJoin('reviews', 'movies.movieID', '=', 'reviews.movieID')
-            ->select(
-                'histories.paymentID',
-                'movies.cover',
-                'movies.movieTitle as title',
-                History::raw('AVG(reviews.rating) as rating'),
-                'movies.genre',
-                'movies.duration',
-                'movies.director'
-            )
-            ->where('payments.paymentStatus', 'completed')
-            ->whereRaw("CONCAT(screenings.date, ' ', screenings.time) < NOW()")
-            ->where('users.userID', $user->userID)
-            ->groupBy('histories.paymentID', 'movies.movieID', 'movies.cover', 'movies.movieTitle', 'movies.genre', 'movies.duration', 'movies.director')
-            ->get();
+            $tickets = History::with([
+                'payment.user',
+                'payment.screening.movie',
+                'payment.screening.studio',
+                'review'
+            ])->whereHas('payment', function ($query) use ($userID) {
+                $query->where('paymentStatus', 'completed')->where('userID', $userID);
+            })->whereHas('payment.screening', function ($query) {
+                $query->whereRaw("CONCAT(date, ' ', time) < NOW()");
+            })->get();
 
-        return response()->json($historyOrders);
+            if ($tickets->isEmpty()) {
+                return response()->json('No History Orders found', 404);
+            }
+
+            return response()->json($tickets);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving history orders',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    public function addReviewToHistoryOrders(Request $request, $id)
+    {
+        try {
+            $historyOrder = History::find($id);
+
+            $request->validate([
+                'reviewID' => 'required|string|max:8'
+            ]);
+
+            $historyOrder->reviewID = $request->reviewID;
+            $historyOrder->save();
+            return response()->json($historyOrder);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'History order updated failed',
+                'error' => $e,
+            ]);
+        }
     }
 
 }

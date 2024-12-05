@@ -141,6 +141,9 @@ class UserController extends Controller
         if ($request->has('email') && $request->email != $user->email) {
             $user->email = $request->email;
         }
+        if ($request->has('gender') && $request->gender != $user->gender) {
+            $user->gender = $request->gender;
+        }
 
 
         if ($request->has('dateOfBirth')) {

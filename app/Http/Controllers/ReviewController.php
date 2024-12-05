@@ -19,7 +19,7 @@ class ReviewController extends Controller
             ]);
 
             $review = Review::create([
-                'reviewID' => '',
+                'reviewID' => Review::generateReviewID(),
                 'userID' => $userID,
                 'movieID' => $movieID,
                 'comment' => $request->comment,

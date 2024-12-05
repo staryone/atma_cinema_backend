@@ -14,16 +14,13 @@ class TicketController extends Controller
         try {
             $request->validate([
                 'paymentID' => 'required|string|max:8|exists:payments,paymentID',
-                'screeningID' => 'required|string|max:8|exists:screenings,screeningID',
                 'seatID' => 'required|string|max:8',
-                'status' => 'required|in:Success,cancelled',
+                'status' => 'required|in:Success,Cancelled',
             ]);
 
             $ticket = Ticket::create([
                 'ticketID' => Ticket::generateTicketID(),
                 'paymentID' => $request->paymentID,
-                'userID' => $user->userID,
-                'screeningID' => $request->screeningID,
                 'seatID' => $request->seatID,
                 'status' => $request->status,
             ]);
@@ -60,21 +57,48 @@ class TicketController extends Controller
     }
 
     // Get ticket by ticketID
-    public function getTicketById($ticketID)
+    // public function getTicketById($ticketID)
+    // {
+    //     try {
+    //         $ticket = Ticket::find($ticketID);
+
+    //         if (!$ticket) {
+    //             return response()->json('Ticket not found', 404);
+    //         }
+
+    //         return response()->json($ticket, 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'message' => 'An error occurred while retrieving the ticket',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    public function getActiveOrders()
     {
         try {
-            $ticket = Ticket::find($ticketID);
+            $userID = auth()->user()->userID;
 
-            if (!$ticket) {
-                return response()->json('Ticket not found', 404);
+            $tickets = Ticket::with([
+                'payment.user',
+                'payment.screening.movie',
+                'payment.screening.studio'
+            ])->whereHas('payment', function ($query) use ($userID) {
+                $query->where('userID', $userID);
+            })->get();
+
+            if ($tickets->isEmpty()) {
+                return response()->json('No tickets found', 404);
             }
 
-            return response()->json($ticket, 200);
+            return response()->json($tickets);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'An error occurred while retrieving the ticket',
+                'message' => 'An error occurred while retrieving tickets',
                 'error' => $e->getMessage()
             ], 500);
         }
+
     }
 }
