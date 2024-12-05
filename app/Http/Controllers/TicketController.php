@@ -88,9 +88,9 @@ class TicketController extends Controller
                 $query->where('userID', $userID);
             })->get();
 
-            if ($tickets->isEmpty()) {
-                return response()->json('No tickets found', 404);
-            }
+            // if ($tickets->isEmpty()) {
+            //     return response()->json('No tickets found', 404);
+            // }
 
             return response()->json($tickets);
         } catch (Exception $e) {
