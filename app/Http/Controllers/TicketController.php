@@ -14,8 +14,8 @@ class TicketController extends Controller
         try {
             $request->validate([
                 'paymentID' => 'required|string|max:8|exists:payments,paymentID',
-                'seatID' => 'required|string|max:8',
-                'status' => 'required|in:Success,Cancelled',
+                'seatID' => 'required|string',
+                'status' => 'required|in:Success,cancelled',
             ]);
 
             $ticket = Ticket::create([

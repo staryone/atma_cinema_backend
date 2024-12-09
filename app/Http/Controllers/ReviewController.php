@@ -81,6 +81,38 @@ class ReviewController extends Controller
         }
     }
 
+    public function getAllReviewByMovie($movieID)
+    {
+        try {
+            $reviews = Review::with('user')
+                ->where('movieID', $movieID)
+                ->get();
+
+            // if ($reviews->isEmpty()) {
+            //     return response()->json(['message' => 'No reviews found for this movie'], 404);
+            // }
+
+            $data = $reviews->map(function ($review) {
+                return [
+                    'reviewID' => $review->reviewID,
+                    'userID' => $review->userID,
+                    'movieID' => $review->movieID,
+                    'comment' => $review->comment,
+                    'rating' => $review->rating,
+                    'reviewDate' => $review->reviewDate,
+                    'fullName' => $review->user->fullName,
+                ];
+            });
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving the reviews',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function editReview(Request $request, $reviewID)
     {
         try {

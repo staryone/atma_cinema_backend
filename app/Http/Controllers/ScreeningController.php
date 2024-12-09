@@ -28,6 +28,28 @@ class ScreeningController extends Controller
             ], 500);
         }
     }
+    public function getScreeningById($screeningID)
+    {
+        try {
+            $screening = Screening::with([
+                'movie',
+                'studio'
+            ])->find($screeningID);
+
+            // print ($screening);
+
+            if ($screening == null || $screening == []) {
+                return response()->json('Screening not found', 404);
+            }
+
+            return response()->json($screening, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving screening',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function updateSeatLayout(Request $request, $screeningID)
     {

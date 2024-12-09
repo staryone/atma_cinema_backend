@@ -32,18 +32,25 @@ Route::get('/fnbs/{category}', [FnbController::class, 'getFnbsByCategory']);
 Route::get('/cast/generate', [CastController::class, 'generateCastByMovie']);
 
 Route::get('/screenings/movie/{movieID}', [ScreeningController::class, 'getScreeningsByMovieId']);
+Route::get('/screenings/{screeningID}', [ScreeningController::class, 'getScreeningById']);
+
+Route::get('/reviews/all/{movieID}', [ReviewController::class, 'getAllReviewByMovie']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/profile', [UserController::class, 'profile']);
     Route::post('/profile/update', [UserController::class, 'updateProfile']);
+    Route::post('/profile/change-password', [UserController::class, 'changePassword']);
 
     Route::get('/histories', [HistoryController::class, 'getHistoryOrders']);
+    Route::post('/histories', [HistoryController::class, 'createHistory']);
+    Route::post('/histories/{id}/add-review', [HistoryController::class, 'addReviewToHistoryOrders']);
 
     Route::resource('studios', StudioController::class);
 
     Route::post('/payments', [PaymentController::class, 'createPayment']);
     Route::get('/payments/{id}', [PaymentController::class, 'getPaymentById']);
+    Route::patch('/payments/{id}/status', [PaymentController::class, 'editStatusPayment']);
 
     Route::put('/screenings/{screeningID}/seat-layout', [ScreeningController::class, 'updateSeatLayout']);
 
@@ -56,7 +63,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reviews', [ReviewController::class, 'getReviewsByAuthenticatedUser']);
     Route::get('/reviews/movie/{movieID}', [ReviewController::class, 'getReviewByMovie']);
     Route::put('/reviews/movie/{movieID}', [ReviewController::class, 'editReview']);
-
-    Route::post('/history/{id}/add-review', [HistoryController::class, 'addReviewToHistoryOrders']);
 });
 

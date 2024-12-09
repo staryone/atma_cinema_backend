@@ -38,6 +38,36 @@ class HistoryController extends Controller
 
     }
 
+    public function createHistory(Request $request)
+    {
+        try {
+            $userID = auth()->user()->userID;
+
+            $request->validate([
+                'paymentID' => 'required|string|max:50',
+            ]);
+
+            $history = History::create([
+                'historyID' => History::generateHistoryID(),
+                'userID' => $userID,
+                'paymentID' => $request->paymentID,
+                'reviewID' => null,
+            ]);
+
+            return response()->json([
+                'message' => 'History created successfully',
+                'data' => $history
+            ], 201);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create history',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     public function addReviewToHistoryOrders(Request $request, $id)
     {
         try {
