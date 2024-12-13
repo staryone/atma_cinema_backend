@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\CastController;
 use App\Http\Controllers\FnbController;
 use App\Http\Controllers\HistoryController;
@@ -63,5 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reviews', [ReviewController::class, 'getReviewsByAuthenticatedUser']);
     Route::get('/reviews/movie/{movieID}', [ReviewController::class, 'getReviewByMovie']);
     Route::put('/reviews/movie/{movieID}', [ReviewController::class, 'editReview']);
+
+    Route::post('/messages', [MessageController::class, 'store']);
 });
 
